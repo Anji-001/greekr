@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Proposal: 3D Anatomy Fitness App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Neon Pulse (Dark Slate background with vibrant Cyan, Purple, and Amber accents) -->
+    <!-- Application Structure Plan: A single-page scrolling dashboard divided into thematic, interactive sections. 
+         1. Hero: Immediate hook with the "Key Innovation".
+         2. The Market Gap: Uses a radar chart to visually compare the proposed app against existing extremes (pure fitness vs pure anatomy).
+         3. Interactive Workflow: A step-by-step explorable diagram of the app's architecture, allowing users to click through the user journey to reveal technical backend details.
+         4. Product Roadmap: An interactive toggle view separating the Phase 1 MVP from the Future Vision, paired with a visual breakdown chart.
+         5. Expected Outcomes: A grid of key benefits to conclude the pitch. 
+         This structure translates a static linear document into an engaging pitch deck/dashboard format. -->
+    <!-- Visualization & Content Choices: 
+         - Problem Statement -> Compare -> Radar Chart (Chart.js): Shows how the app bridges the gap between two existing, flawed app types. 
+         - System Workflow -> Organize/Process -> Interactive HTML/CSS Stepper: Allows user to drive the pace of learning the technical architecture. NO SVG/Mermaid used.
+         - MVP vs Future -> Compare/Organize -> Interactive Toggle + Doughnut Chart (Chart.js): Clearly delineates project scope and prevents scope creep visualization.
+         - Expected Outcomes -> Inform -> HTML/CSS Cards with Unicode Icons: Highlights key takeaways visually without relying on SVG. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #f8fafc; /* slate-50 */
+        }
+        
+        /* Mandatory Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px; 
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #22d3ee 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .step-btn.active {
+            border-color: #22d3ee;
+            background-color: rgba(34, 211, 238, 0.1);
+            transform: scale(1.05);
+        }
+
+        .roadmap-tab.active {
+            background-color: #c084fc;
+            color: #ffffff;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-white">
+
+    <!-- Navigation / Header -->
+    <nav class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="font-bold text-xl tracking-wider text-cyan-400">&#129464; greekr</div>
+            <div class="hidden md:flex space-x-6 text-sm font-semibold text-slate-400">
+                <a href="#gap" class="hover:text-cyan-400 transition-colors">The Market Gap</a>
+                <a href="#workflow" class="hover:text-cyan-400 transition-colors">System Engine</a>
+                <a href="#roadmap" class="hover:text-cyan-400 transition-colors">MVP Scope</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+
+        <!-- Hero Section -->
+        <header class="text-center space-y-6 pt-10 pb-16">
+            <div class="inline-block px-4 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs font-bold text-purple-400 uppercase tracking-widest mb-4">
+                Project Proposal Interactive Brief
+            </div>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight">
+                Beyond Reps.<br>
+                <span class="gradient-text">See Inside the Movement.</span>
+            </h1>
+            <p class="max-w-3xl mx-auto text-xl text-slate-400 leading-relaxed">
+                A next-generation interactive mobile application that bridges the gap between theoretical anatomy and practical exercise execution using real-time, manipulatable 3D human models.
+            </p>
+            <div class="mt-10 p-6 rounded-2xl bg-gradient-to-r from-amber-500/10 to-amber-500/5 border border-amber-500/20 max-w-2xl mx-auto shadow-lg shadow-amber-500/5">
+                <h3 class="text-amber-400 font-bold text-lg mb-2">&#128161; Key Innovation</h3>
+                <p class="text-slate-300 italic">"Seeing what your muscles are doing in real time. Instead of just telling users what muscle is used, we visually demonstrate it using a live 3D model."</p>
+            </div>
+        </header>
+
+        <!-- Section 1: The Problem & Market Gap -->
+        <section id="gap" class="scroll-mt-24">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <h2 class="text-3xl font-bold text-white">The Market Polarization Problem</h2>
+                    <p class="text-slate-400 leading-relaxed">
+                        Most fitness learners struggle to understand exact muscle engagement, differentiate between muscle heads (e.g., front vs. rear deltoid), and learn correct form. 
+                    </p>
+                    <p class="text-slate-400 leading-relaxed">
+                        Currently, the market is severely polarized. <span class="text-cyan-400 font-semibold">Traditional Anatomy apps</span> are too theoretical. <span class="text-amber-400 font-semibold">Traditional Fitness apps</span> are too practical, lacking deep biomechanical explanations. AnatomyFit OS provides the missing bridge.
+                    </p>
+                    <ul class="space-y-3 mt-6">
+                        <li class="flex items-center text-slate-300 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                            <span class="mr-3 text-red-400">&#10006;</span> Lack of internal visualization
+                        </li>
+                        <li class="flex items-center text-slate-300 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                            <span class="mr-3 text-red-400">&#10006;</span> Confusion over primary vs stabilizer muscles
+                        </li>
+                        <li class="flex items-center text-slate-300 bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                            <span class="mr-3 text-green-400">&#10004;</span> Our Solution: Real-time 3D highlighted engagement
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl">
+                    <h3 class="text-center text-sm font-semibold text-slate-400 mb-4 uppercase tracking-wider">Feature Comparison Analysis</h3>
+                    <div class="chart-container">
+                        <canvas id="marketRadarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive System Workflow -->
+        <section id="workflow" class="scroll-mt-24">
+            <div class="text-center mb-12 space-y-4">
+                <h2 class="text-3xl font-bold text-white">System Architecture & Workflow</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">
+                    Explore how data moves from the cloud to the user interface in real-time. Click on any step in the process to view the underlying technical mechanisms.
+                </p>
+            </div>
+
+            <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-2xl">
+                <!-- Interactive Stepper -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 relative">
+                    <!-- Connecting line (hidden on mobile) -->
+                    <div class="hidden md:block absolute top-1/2 left-10 right-10 h-1 bg-slate-700 -z-10 transform -translate-y-1/2"></div>
+                    
+                    <button onclick="setWorkflowStep(0)" id="step-0" class="step-btn active w-full md:w-auto flex-1 bg-slate-900 border-2 border-slate-600 rounded-xl p-4 text-center transition-all duration-300 hover:border-cyan-400 z-10 cursor-pointer">
+                        <div class="text-3xl mb-2">&#128241;</div>
+                        <div class="font-bold text-white text-sm">1. Selection</div>
+                    </button>
+                    <div class="text-cyan-400 md:hidden">&#8595;</div>
+                    
+                    <button onclick="setWorkflowStep(1)" id="step-1" class="step-btn w-full md:w-auto flex-1 bg-slate-900 border-2 border-slate-600 rounded-xl p-4 text-center transition-all duration-300 hover:border-cyan-400 z-10 cursor-pointer">
+                        <div class="text-3xl mb-2">&#9781;</div>
+                        <div class="font-bold text-white text-sm">2. Fetch Data</div>
+                    </button>
+                    <div class="text-cyan-400 md:hidden">&#8595;</div>
+                    
+                    <button onclick="setWorkflowStep(2)" id="step-2" class="step-btn w-full md:w-auto flex-1 bg-slate-900 border-2 border-slate-600 rounded-xl p-4 text-center transition-all duration-300 hover:border-cyan-400 z-10 cursor-pointer">
+                        <div class="text-3xl mb-2">&#128229;</div>
+                        <div class="font-bold text-white text-sm">3. Load Assets</div>
+                    </button>
+                    <div class="text-cyan-400 md:hidden">&#8595;</div>
+
+                    <button onclick="setWorkflowStep(3)" id="step-3" class="step-btn w-full md:w-auto flex-1 bg-slate-900 border-2 border-slate-600 rounded-xl p-4 text-center transition-all duration-300 hover:border-cyan-400 z-10 cursor-pointer">
+                        <div class="text-3xl mb-2">&#129464;</div>
+                        <div class="font-bold text-white text-sm">4. Highlight</div>
+                    </button>
+                    <div class="text-cyan-400 md:hidden">&#8595;</div>
+
+                    <button onclick="setWorkflowStep(4)" id="step-4" class="step-btn w-full md:w-auto flex-1 bg-slate-900 border-2 border-slate-600 rounded-xl p-4 text-center transition-all duration-300 hover:border-cyan-400 z-10 cursor-pointer">
+                        <div class="text-3xl mb-2">&#128377;</div>
+                        <div class="font-bold text-white text-sm">5. Interact</div>
+                    </button>
+                </div>
+
+                <!-- Detail Pane -->
+                <div class="bg-slate-900 rounded-2xl p-8 border border-cyan-500/30 min-h-[200px] flex items-center shadow-inner">
+                    <div id="workflow-content" class="w-full">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: MVP Scope vs Future -->
+        <section id="roadmap" class="scroll-mt-24">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-slate-800 rounded-3xl overflow-hidden border border-slate-700 shadow-xl">
+                
+                <div class="lg:col-span-5 p-8 md:p-12 bg-slate-800/50 flex flex-col justify-center">
+                    <h2 class="text-3xl font-bold text-white mb-4">Development Roadmap</h2>
+                    <p class="text-slate-400 mb-8">
+                        To reduce complexity and ensure a robust core experience, the project is strictly phased. Toggle below to see the feature distribution between our immediate MVP and future iterations.
+                    </p>
+                    
+                    <div class="flex p-1 bg-slate-900 rounded-xl border border-slate-700 w-full mb-8">
+                        <button onclick="toggleRoadmap('mvp')" id="tab-mvp" class="roadmap-tab active flex-1 py-3 px-4 rounded-lg text-sm font-medium text-slate-400 transition-all duration-200">
+                            Phase 1 (MVP)
+                        </button>
+                        <button onclick="toggleRoadmap('future')" id="tab-future" class="roadmap-tab flex-1 py-3 px-4 rounded-lg text-sm font-medium text-slate-400 transition-all duration-200">
+                            Future Phases
+                        </button>
+                    </div>
+
+                    <ul id="roadmap-list" class="space-y-4">
+                        <!-- Injected via JS -->
+                    </ul>
+                </div>
+                
+                <div class="lg:col-span-7 bg-slate-900 p-8 flex items-center justify-center border-l border-slate-700">
+                    <div class="w-full">
+                        <h3 class="text-center text-sm font-semibold text-slate-400 mb-2 uppercase tracking-wider">Project Scope Distribution</h3>
+                        <div class="chart-container">
+                            <canvas id="scopeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section 4: Expected Outcomes -->
+        <section class="pb-24">
+            <div class="text-center mb-12 space-y-4">
+                <h2 class="text-3xl font-bold text-white">Expected Application Outcomes</h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">
+                    The final application is designed to deliver immense value to fitness enthusiasts, educators, and serves as a foundational platform for advanced tech integration.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700 hover:border-cyan-400 transition-colors duration-300 shadow-lg group">
+                    <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">&#128065;</div>
+                    <h3 class="text-lg font-bold text-white mb-2">Visual Understanding</h3>
+                    <p class="text-sm text-slate-400">Clear, immediate visual comprehension of which muscles are activated during complex movements.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700 hover:border-purple-400 transition-colors duration-300 shadow-lg group">
+                    <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">&#127947;</div>
+                    <h3 class="text-lg font-bold text-white mb-2">Better Execution</h3>
+                    <p class="text-sm text-slate-400">Improved exercise learning experience leading to safer, more effective workout forms.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700 hover:border-amber-400 transition-colors duration-300 shadow-lg group">
+                    <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">&#128218;</div>
+                    <h3 class="text-lg font-bold text-white mb-2">Educational Tool</h3>
+                    <p class="text-sm text-slate-400">Serves as a deep anatomy exploration tool, bridging the gap between textbook theory and gym reality.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl border border-slate-700 hover:border-pink-400 transition-colors duration-300 shadow-lg group">
+                    <div class="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-300">&#129302;</div>
+                    <h3 class="text-lg font-bold text-white mb-2">AI Foundation</h3>
+                    <p class="text-sm text-slate-400">Provides the necessary structured anatomical and biomechanical foundation for future AI fitness coaching.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-950 border-t border-slate-800 py-8 text-center text-slate-500 text-sm">
+        <p>Interactive Proposal &bull; 3D Interactive Anatomy-Based Fitness Learning App</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. Core Utilities & Config ---
+
+        // Mandatory label wrapping logic for Chart.js
+        const wrapLabel = (label) => {
+            if (label.length <= 16) return label;
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            words.forEach(word => {
+                if ((currentLine + word).length > 16) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            });
+            if (currentLine.trim().length > 0) lines.push(currentLine.trim());
+            return lines;
+        };
+
+        // Mandatory custom tooltip config for multiline labels
+        const customTooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            },
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleColor: '#22d3ee',
+            bodyColor: '#f8fafc',
+            borderColor: '#334155',
+            borderWidth: 1,
+            padding: 12
+        };
+
+        // Global Chart Defaults
+        Chart.defaults.color = '#94a3b8'; // slate-400
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // --- 2. State & Data Management ---
+
+        // Workflow Data
+        const workflowData = [
+            {
+                title: "User Interaction",
+                subtitle: "Exercise Selection",
+                desc: "The user opens the app and selects a specific exercise from a simple, intuitive UI library (e.g., Bicep Curl, Squat).",
+                tech: "Frontend UI (React Native / Flutter)"
+            },
+            {
+                title: "Database Query",
+                subtitle: "App fetches exercise data",
+                desc: "The application sends a request to the backend to retrieve the specific biomechanical data mapped to the chosen exercise.",
+                tech: "Cloud Database (Firebase / AWS DynamoDB)"
+            },
+            {
+                title: "Asset Management",
+                subtitle: "Loading Textures & Models",
+                desc: "The app downloads or loads cached Start/End reference images, the rigged glTF/glb 3D model, and specific muscle activation maps.",
+                tech: "Cloud Storage (Firebase Storage / AWS S3)"
+            },
+            {
+                title: "Real-time Rendering",
+                subtitle: "Dynamic Highlight Engine",
+                desc: "The 3D engine renders the model. Primary, secondary, and stabilizer muscles highlight dynamically based on their activation intensity during the movement.",
+                tech: "3D Engine (Three.js / Unity) + Shader Logic"
+            },
+            {
+                title: "Exploration",
+                subtitle: "Advanced 3D Interaction",
+                desc: "The user can pause the animation, rotate the camera, zoom in, and manually manipulate the 3D model's limbs to explore joint limits.",
+                tech: "Rigged Armature Manipulation via Touch Controls"
+            }
+        ];
+
+        // Roadmap Data
+        const roadmapData = {
+            mvp: [
+                { icon: '&#129464;', text: 'Upper body anatomy only' },
+                { icon: '&#128221;', text: '10-15 core exercises' },
+                { icon: '&#128161;', text: 'Basic muscle highlighting system' },
+                { icon: '&#128241;', text: 'Simple UI for exercise selection' },
+                { icon: '&#128247;', text: 'Dual-image exercise reference system' },
+                { icon: '&#128377;', text: 'Advanced 3D interaction (rotate, zoom, basic joint manipulation)' }
+            ],
+            future: [
+                { icon: '&#129433;', text: 'Full body anatomy integration' },
+                { icon: '&#128218;', text: 'Large, comprehensive exercise database' },
+                { icon: '&#128187;', text: 'Advanced personalization & user profiles' },
+                { icon: '&#129302;', text: 'AI-driven fitness coaching & form correction logic' },
+                { icon: '&#128200;', text: 'Workout tracking and progression analytics' }
+            ]
+        };
+
+        // --- 3. Interaction Logic ---
+
+        // Workflow Stepper Logic
+        function setWorkflowStep(index) {
+            // Update buttons
+            document.querySelectorAll('.step-btn').forEach((btn, i) => {
+                if(i === index) {
+                    btn.classList.add('active');
+                    btn.querySelector('.text-3xl').classList.add('text-cyan-400');
+                } else {
+                    btn.classList.remove('active');
+                    btn.querySelector('.text-3xl').classList.remove('text-cyan-400');
+                }
+            });
+
+            // Update Content
+            const data = workflowData[index];
+            const contentDiv = document.getElementById('workflow-content');
+            
+            // Fade effect
+            contentDiv.style.opacity = 0;
+            setTimeout(() => {
+                contentDiv.innerHTML = `
+                    <div class="flex flex-col md:flex-row gap-8 items-start">
+                        <div class="flex-1">
+                            <h3 class="text-cyan-400 text-sm font-bold uppercase tracking-wider mb-1">Step ${index + 1}: ${data.title}</h3>
+                            <h4 class="text-2xl font-bold text-white mb-4">${data.subtitle}</h4>
+                            <p class="text-slate-300 leading-relaxed mb-4">${data.desc}</p>
+                        </div>
+                        <div class="md:w-1/3 bg-slate-800 p-5 rounded-xl border border-slate-700 w-full">
+                            <h5 class="text-xs text-slate-400 uppercase tracking-wider font-bold mb-2">Technical Implementation</h5>
+                            <p class="text-amber-400 font-mono text-sm">${data.tech}</p>
+                        </div>
+                    </div>
+                `;
+                contentDiv.style.transition = 'opacity 0.3s ease';
+                contentDiv.style.opacity = 1;
+            }, 150);
+        }
+
+        // Roadmap Toggle Logic
+        let scopeChartInstance = null;
+
+        function toggleRoadmap(view) {
+            // Update tabs
+            document.getElementById('tab-mvp').classList.toggle('active', view === 'mvp');
+            document.getElementById('tab-future').classList.toggle('active', view === 'future');
+
+            // Update List
+            const listUl = document.getElementById('roadmap-list');
+            listUl.innerHTML = '';
+            roadmapData[view].forEach(item => {
+                listUl.innerHTML += `
+                    <li class="flex items-start bg-slate-900 p-4 rounded-xl border border-slate-700 transform transition hover:-translate-y-1 hover:border-purple-500/50">
+                        <span class="text-2xl mr-4">${item.icon}</span>
+                        <span class="text-slate-200 font-medium mt-1">${item.text}</span>
+                    </li>
+                `;
+            });
+
+            // Update Chart Data based on view (Highlighting focus)
+            if(scopeChartInstance) {
+                if(view === 'mvp') {
+                    scopeChartInstance.data.datasets[0].backgroundColor = ['#22d3ee', '#1e293b', '#1e293b']; // Highlight Core
+                } else {
+                    scopeChartInstance.data.datasets[0].backgroundColor = ['#1e293b', '#c084fc', '#fbbf24']; // Highlight Future/AI
+                }
+                scopeChartInstance.update();
+            }
+        }
+
+        // --- 4. Chart Initialization ---
+
+        function initCharts() {
+            // Chart 1: Market Radar Chart
+            const ctxMarket = document.getElementById('marketRadarChart').getContext('2d');
+            new Chart(ctxMarket, {
+                type: 'radar',
+                data: {
+                    labels: [
+                        wrapLabel('Anatomical Accuracy'),
+                        wrapLabel('Practical Workout Guidance'),
+                        wrapLabel('Real-Time Visual Feedback'),
+                        wrapLabel('Interactive 3D Simulation')
+                    ],
+                    datasets: [
+                        {
+                            label: 'Anatomy Apps',
+                            data: [10, 1, 2, 7],
+                            backgroundColor: 'rgba(51, 65, 85, 0.4)', // slate-700
+                            borderColor: '#64748b', // slate-500
+                            pointBackgroundColor: '#64748b',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'Fitness Trackers',
+                            data: [2, 9, 1, 1],
+                            backgroundColor: 'rgba(251, 191, 36, 0.2)', // amber
+                            borderColor: '#fbbf24',
+                            pointBackgroundColor: '#fbbf24',
+                            borderWidth: 2
+                        },
+                        {
+                            label: 'AnatomyFit OS',
+                            data: [9, 9, 10, 9],
+                            backgroundColor: 'rgba(34, 211, 238, 0.4)', // cyan
+                            borderColor: '#22d3ee',
+                            pointBackgroundColor: '#22d3ee',
+                            borderWidth: 3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            pointLabels: { 
+                                font: { size: 11, family: "'Inter', sans-serif", weight: '600' }, 
+                                color: '#cbd5e1' 
+                            },
+                            ticks: { display: false, min: 0, max: 10 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#f8fafc', padding: 20, usePointStyle: true } },
+                        tooltip: customTooltipConfig
+                    }
+                }
+            });
+
+            // Chart 2: Scope Doughnut Chart
+            const ctxScope = document.getElementById('scopeChart').getContext('2d');
+            scopeChartInstance = new Chart(ctxScope, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        wrapLabel('Core MVP (Upper Body, Core Exercises, 3D UI)'),
+                        wrapLabel('Expansion (Full Body, Large DB)'),
+                        wrapLabel('Advanced Tech (AI Coaching, Analytics)')
+                    ],
+                    datasets: [{
+                        data: [40, 35, 25],
+                        backgroundColor: ['#22d3ee', '#1e293b', '#1e293b'], // Initial highlight on MVP
+                        borderWidth: 2,
+                        borderColor: '#0f172a',
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#f8fafc', padding: 15, font: {size: 11} } },
+                        tooltip: customTooltipConfig
+                    }
+                }
+            });
+        }
+
+        // --- 5. Bootstrapping ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setWorkflowStep(0); // Initialize stepper
+            toggleRoadmap('mvp'); // Initialize roadmap
+            initCharts(); // Render charts
+        });
+
+    </script>
+</body>
+</html>
